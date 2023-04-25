@@ -33,6 +33,10 @@ $routes->get('/', 'HomeController::index');
 
 $routes->get('/kategori', 'KategoriController::index');
 $routes->get('/kategori/create', 'KategoriController::create');
+$routes->post('/kategori/store', 'KategoriController::store');
+$routes->get('/kategori/edit/(:num)', 'KategoriController::edit/$1');
+$routes->post('/kategori/update', 'KategoriController::update');
+$routes->delete('/kategori/delete/(:num)', 'KategoriController::delete/$1');
 
 /*
  * --------------------------------------------------------------------

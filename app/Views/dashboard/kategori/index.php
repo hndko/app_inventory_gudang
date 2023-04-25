@@ -40,11 +40,28 @@
                             <tr>
                                 <td><?= $no++ ?></td>
                                 <td><?= $row['kat_nama'] ?></td>
-                                <td></td>
+                                <td>
+                                    <button type="button" class="btn btn-success btn-sm" title="Edit Data" onclick="edit('<?= $row['kat_id'] ?>')">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                    <form action="kategori/delete/<?= $row['kat_id'] ?>" method="post" class="d-inline">
+                                        <?= csrf_field() ?>
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah anda yakin ingin menghapusnya?')">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
+
+                <script>
+                    function edit(id) {
+                        window.location = ('/kategori/edit/' + id);
+                    }
+                </script>
             </div>
         </div>
     </div>

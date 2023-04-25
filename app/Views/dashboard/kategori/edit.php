@@ -26,19 +26,20 @@
                 </button>
             </div>
             <div class="card-body">
-                <form action="<?= base_url('kategori/store') ?>" method="post">
+                <form action="<?= base_url('kategori/update') ?>" method="post">
                     <?= csrf_field() ?>
+                    <input type="hidden" name="kat_id" value="<?= $row['kat_id'] ?>">
                     <div class="form-group row">
                         <label for="kat_nama" class="col-sm-2 col-form-label">Nama Kategori</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control <?= validation_errors('kat_nama') ? 'is-invalid' : '' ?>" name="kat_nama" id="kat_nama" autocomplete="off" placeholder="Isikan Nama Kategori" autofocus>
+                            <input type="text" class="form-control <?= validation_errors('kat_nama') ? 'is-invalid' : '' ?>" name="kat_nama" id="kat_nama" autocomplete="off" placeholder="Isikan Nama Kategori" value="<?= $row['kat_nama'] ?>">
                             <div class="form-text text-danger">
                                 <?= validation_show_error('kat_nama') ?>
                             </div>
                         </div>
                     </div>
                     <div class="text-right">
-                        <button type="submit" class="btn btn-primary">Simpan</button>
+                        <button type="submit" class="btn btn-success">Ubah</button>
                     </div>
                 </form>
             </div>
