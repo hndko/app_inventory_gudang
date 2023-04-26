@@ -16,7 +16,16 @@ class KategoriSeeder extends Seeder
                 'kat_nama' => 'SSD'
             ],
             [
-                'kat_nama' => 'TAS'
+                'kat_nama' => 'Tas'
+            ],
+            [
+                'kat_nama' => 'Card Holder'
+            ],
+            [
+                'kat_nama' => 'Kabel Data'
+            ],
+            [
+                'kat_nama' => 'Casing'
             ],
         ];
 

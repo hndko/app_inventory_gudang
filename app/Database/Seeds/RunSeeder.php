@@ -9,5 +9,6 @@ class RunSeeder extends Seeder
     public function run()
     {
         $this->call('KategoriSeeder');
+        $this->call('SatuanSeeder');
     }
 }
