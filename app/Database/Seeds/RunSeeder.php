@@ -10,5 +10,6 @@ class RunSeeder extends Seeder
     {
         $this->call('KategoriSeeder');
         $this->call('SatuanSeeder');
+        $this->call('BarangSeeder');
     }
 }

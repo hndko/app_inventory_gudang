@@ -34,7 +34,7 @@ class Barang extends Migration
             'brg_gambar' => [
                 'type'       => 'VARCHAR',
                 'constraint' => '255',
-                'default' => 'null'
+                'null' => true
             ],
             'brg_stok' => [
                 'type'       => 'INT',
