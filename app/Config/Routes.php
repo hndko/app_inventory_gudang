@@ -32,6 +32,7 @@ $routes->setAutoRoute(false);
 $routes->get('/', 'HomeController::index');
 
 $routes->get('/kategori', 'KategoriController::index');
+$routes->post('/kategori', 'KategoriController::index');
 $routes->get('/kategori/create', 'KategoriController::create');
 $routes->post('/kategori/store', 'KategoriController::store');
 $routes->get('/kategori/edit/(:num)', 'KategoriController::edit/$1');

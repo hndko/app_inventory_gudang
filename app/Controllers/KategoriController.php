@@ -14,10 +14,20 @@ class KategoriController extends BaseController
 
     public function index()
     {
+        $keyword = $this->request->getVar('keyword');
+        if ($keyword) {
+            $searchKategori = $this->kategori->search($keyword);
+        } else {
+            $searchKategori = $this->kategori;
+        }
+
+        $no = $this->request->getVar('page_kategori') ? $this->request->getVar('page_kategori') : '1';
         $data = [
             'title' => 'Kategori',
-            'tampilData' => $this->kategori->paginate(5, 'kategori'),
-            'pager' => $this->kategori->pager
+            // 'tampilData' => $this->kategori->paginate(5, 'kategori'),
+            'tampilData' => $searchKategori->paginate(5, 'kategori'),
+            'pager' => $this->kategori->pager,
+            'no' => 1 + (($no - 1) * 5),
         ];
 
         return view('dashboard/kategori/index', $data);

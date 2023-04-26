@@ -26,6 +26,17 @@
                 </button>
             </div>
             <div class="card-body">
+                <form action="" method="post">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Masukan Keyword Pencarian..." name="keyword" autocomplete="off" required>
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-primary" type="submit">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
                 <table class="table table-striped table-bordered" style="width: 100%;">
                     <thead>
                         <tr>
@@ -35,7 +46,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <?php $no = 1; ?>
                         <?php foreach ($tampilData as $row) : ?>
                             <tr>
                                 <td><?= $no++ ?></td>
@@ -56,6 +66,10 @@
                         <?php endforeach; ?>
                     </tbody>
                 </table>
+
+                <div>
+                    <?= $pager->links('kategori', 'paging') ?>
+                </div>
 
                 <script>
                     function edit(id) {
