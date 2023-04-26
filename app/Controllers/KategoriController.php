@@ -16,7 +16,8 @@ class KategoriController extends BaseController
     {
         $data = [
             'title' => 'Kategori',
-            'tampilData' => $this->kategori->findAll()
+            'tampilData' => $this->kategori->paginate(5, 'kategori'),
+            'pager' => $this->kategori->pager
         ];
 
         return view('dashboard/kategori/index', $data);

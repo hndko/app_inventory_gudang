@@ -1,6 +1,6 @@
 <script src="<?= base_url() ?>plugins/jquery/jquery.min.js"></script>
 <script src="<?= base_url() ?>plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="<?= base_url() ?>dist/js/adminlte.min.js"></script>
+<script src="<?= base_url() ?>assets/js/adminlte.min.js"></script>
 
 <!-- Sweetalert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9.17.2/dist/sweetalert2.min.js"></script>
