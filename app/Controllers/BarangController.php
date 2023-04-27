@@ -137,7 +137,9 @@ class BarangController extends BaseController
             $data = [
                 'title' => 'Barang',
                 'pages' => 'Edit Data Barang',
-                'row' => $cekData
+                'row' => $cekData,
+                'dataKategori' => $this->kategori->findAll(),
+                'dataSatuan' => $this->satuan->findAll(),
             ];
 
             return view('dashboard/barang/edit', $data);
@@ -150,11 +152,48 @@ class BarangController extends BaseController
     public function update()
     {
         $rules = [
-            'kat_nama' => [
+            'brg_kode' => [
+                'rules' => 'required',
+                'label' => 'Kode barang',
+                'errors' => [
+                    'required' => '{field} tidak boleh kosong'
+                ]
+            ],
+            'brg_nama' => [
                 'rules' => 'required|min_length[3]',
                 'label' => 'Nama barang',
                 'errors' => [
                     'required' => '{field} tidak boleh kosong'
+                ]
+            ],
+            'brg_kat_id' => [
+                'rules' => 'required',
+                'label' => 'Nama barang',
+                'errors' => [
+                    'required' => '{field} tidak boleh kosong'
+                ]
+            ],
+            'brg_sat_id' => [
+                'rules' => 'required',
+                'label' => 'Nama barang',
+                'errors' => [
+                    'required' => '{field} tidak boleh kosong'
+                ]
+            ],
+            'brg_harga' => [
+                'rules' => 'required|numeric',
+                'label' => 'Nama barang',
+                'errors' => [
+                    'required' => '{field} tidak boleh kosong',
+                    'numeric' => '{field} hanya dalam bentuk angka'
+                ]
+            ],
+            'brg_stok' => [
+                'rules' => 'required|numeric',
+                'label' => 'Nama barang',
+                'errors' => [
+                    'required' => '{field} tidak boleh kosong',
+                    'numeric' => '{field} hanya dalam bentuk angka'
                 ]
             ],
         ];
@@ -163,9 +202,32 @@ class BarangController extends BaseController
             return redirect()->back()->withInput();
         }
 
+        $brg_gambar = $this->request->getFile('brg_gambar');
+        if ($brg_gambar->getError() == 4) {
+            $newGambar = $this->request->getVar('brg_gambar_old');
+        } else {
+            $result = $this->barang->where('brg_id', $this->request->getVar('brg_id'))->first();
+            if ($result['brg_gambar'] == null) {
+                $newGambar = $brg_gambar->getRandomName();
+                $brg_gambar->move('assets/upload', $newGambar);
+            } else {
+                $newGambar = $brg_gambar->getRandomName();
+                $brg_gambar->move('assets/upload', $newGambar);
+
+                $unlink = $this->request->getVar('brg_gambar_old');
+                unlink('assets/upload/' . $unlink);
+            }
+        }
+
         $this->barang->save([
-            'kat_id' => $this->request->getVar('kat_id'),
-            'kat_nama' => $this->request->getVar('kat_nama'),
+            'brg_id' => $this->request->getVar('brg_id'),
+            'brg_kode' => $this->request->getVar('brg_kode'),
+            'brg_nama' => $this->request->getVar('brg_nama'),
+            'brg_kat_id' => $this->request->getVar('brg_kat_id'),
+            'brg_sat_id' => $this->request->getVar('brg_sat_id'),
+            'brg_harga' => $this->request->getVar('brg_harga'),
+            'brg_stok' => $this->request->getVar('brg_stok'),
+            'brg_gambar' => $newGambar,
         ]);
 
         session()->setFlashdata('success', 'Data Berhasil Diubahkan.');
@@ -174,8 +236,18 @@ class BarangController extends BaseController
 
     public function delete($id)
     {
-        $this->barang->delete($id);
-        session()->setFlashdata('success', 'Data Berhasil Dihapuskan.');
-        return redirect()->to('barang');
+        $result = $this->barang->where('brg_id', $id)->first();
+        if ($result['brg_gambar'] == null) {
+            $this->barang->delete($id);
+            session()->setFlashdata('success', 'Data Berhasil Dihapuskan.');
+            return redirect()->to('barang');
+        } else {
+            $unlink = $result['brg_gambar'];
+            unlink('assets/upload/' . $unlink);
+
+            $this->barang->delete($id);
+            session()->setFlashdata('success', 'Data Berhasil Dihapuskan.');
+            return redirect()->to('barang');
+        }
     }
 }

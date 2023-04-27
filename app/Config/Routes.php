@@ -55,6 +55,9 @@ $routes->get('/barang/edit/(:num)', 'BarangController::edit/$1');
 $routes->post('/barang/update', 'BarangController::update');
 $routes->delete('/barang/delete/(:num)', 'BarangController::delete/$1');
 
+$routes->get('/barangmasuk', 'BarangMasukController::index');
+$routes->get('/barangmasuk/dataTemp', 'BarangMasukController::dataTemp');
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing

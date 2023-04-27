@@ -41,6 +41,14 @@
                         <p>Barang</p>
                     </a>
                 </li>
+
+                <li class="nav-header">Transaksi</li>
+                <li class="nav-item">
+                    <a href="<?= base_url('barangmasuk') ?>" class="nav-link">
+                        <i class="nav-icon fas fa-arrow-circle-up text-primary"></i>
+                        <p>Barang Masuk</p>
+                    </a>
+                </li>
             </ul>
         </nav>
     </div>
