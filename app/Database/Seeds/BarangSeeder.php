@@ -13,6 +13,7 @@ class BarangSeeder extends Seeder
 
         for ($i = 1; $i <= 15; $i++) {
             $data = [
+                'brg_kode' => 'BRG' . sprintf("%04s", $i),
                 'brg_nama' => $faker->name(),
                 'brg_kat_id' => $faker->randomElements(['1', '2', '3', '4', '5']),
                 'brg_sat_id' => $faker->randomElements(['1', '2', '3']),

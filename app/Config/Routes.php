@@ -47,6 +47,14 @@ $routes->get('/satuan/edit/(:num)', 'SatuanController::edit/$1');
 $routes->post('/satuan/update', 'SatuanController::update');
 $routes->delete('/satuan/delete/(:num)', 'SatuanController::delete/$1');
 
+$routes->get('/barang', 'BarangController::index');
+$routes->post('/barang', 'BarangController::index');
+$routes->get('/barang/create', 'BarangController::create');
+$routes->post('/barang/store', 'BarangController::store');
+$routes->get('/barang/edit/(:num)', 'BarangController::edit/$1');
+$routes->post('/barang/update', 'BarangController::update');
+$routes->delete('/barang/delete/(:num)', 'BarangController::delete/$1');
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing

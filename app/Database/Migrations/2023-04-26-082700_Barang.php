@@ -15,6 +15,10 @@ class Barang extends Migration
                 'unsigned'       => true,
                 'auto_increment' => true,
             ],
+            'brg_kode' => [
+                'type'       => 'VARCHAR',
+                'constraint' => '50',
+            ],
             'brg_nama' => [
                 'type'       => 'VARCHAR',
                 'constraint' => '150',
