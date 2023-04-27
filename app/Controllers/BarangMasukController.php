@@ -46,16 +46,21 @@ class BarangMasukController extends BaseController
     {
         if ($this->request->isAJAX()) {
             $kode_barang = $this->request->getPost('kode_barang');
-            $data = $this->Barang->where('brg_kode', $kode_barang)->first();
+            $dataBarang = $this->Barang->where('brg_kode', $kode_barang)->first();
+            if ($dataBarang == null) {
+                $json = [
+                    'error' => 'Data Barang Tidak Ditemukan!'
+                ];
+            } else {
+                $data = [
+                    'brg_nama' => $dataBarang['brg_nama'],
+                    'brg_harga' => $dataBarang['brg_harga'],
+                ];
 
-            $data = [
-                'brg_nama' => $data['brg_nama'],
-                'brg_harga' => $data['brg_harga'],
-            ];
-
-            $json = [
-                'data' => $data
-            ];
+                $json = [
+                    'data' => $data
+                ];
+            }
 
             echo json_encode($json);
         } else {

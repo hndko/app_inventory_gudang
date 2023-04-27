@@ -114,6 +114,13 @@
         });
     }
 
+    function kosong() {
+        $('#kode_barang').val('');
+        $('#nama_barang').val('');
+        $('#harga_jual').val('');
+        $('#kode_barang').focus();
+    }
+
     $(document).ready(function() {
         dataTemp();
 
@@ -139,6 +146,11 @@
                             // alert('sukses');
                         }
 
+                        if (response.error) {
+                            alert(response.error);
+                            kosong();
+                        }
+
                         console.log(response.data);
                     },
                     error: function(xhr, ajaxOptions, thrownError) {
@@ -150,7 +162,21 @@
 
         $('#tombolTambahItem').click(function(e) {
             e.preventDefault();
-            alert('ini tombolTambahItem');
+            let faktur = $('#faktur').val();
+            let kode_barang = $('#kode_barang').val();
+            let harga_beli = $('#harga_beli').val();
+            let harga_jual = $('#harga_jual').val();
+            let jumlah = $('#jumlah').val();
+
+            if (faktur.length == 0) {
+                alert('Maaf, Faktur Wajib Diisi');
+            } else if (kode_barang.length == 0) {
+                alert('Maaf, Kode Barang Tidak Boleh Kosong');
+            } else if (harga_beli.length == 0) {
+                alert('Maaf, Harga Beli Tidak Boleh Kosong');
+            } else if (jumlah.length == 0) {
+                alert('Maaf, Jumlah Tidak Boleh kosong');
+            }
         });
     });
 </script>
