@@ -56,11 +56,11 @@
                             </div>
                             <div class="form-group col-md-3">
                                 <label for="nama_barang">Nama Barang</label>
-                                <input type="text" class="form-control" name="nama_barang" id="nama_barang" autocomplete="off">
+                                <input type="text" class="form-control" name="nama_barang" id="nama_barang" autocomplete="off" readonly>
                             </div>
                             <div class="form-group col-md-2">
                                 <label for="harga_jual">Harga Jual</label>
-                                <input type="number" class="form-control" name="harga_jual" id="harga_jual" autocomplete="off">
+                                <input type="number" class="form-control" name="harga_jual" id="harga_jual" autocomplete="off" readonly>
                             </div>
                             <div class="form-group col-md-2">
                                 <label for="harga_beli">Harga Beli</label>
@@ -82,6 +82,7 @@
                                 </div>
                             </div>
                         </div>
+                        <div id="showDataTemp"></div>
                     </div>
                 </div>
             </div>
@@ -95,13 +96,17 @@
 
         $.ajax({
             type: "post",
-            url: "/barangmasuk/dataTemp",
+            url: "<?= base_url() ?>barangmasuk/dataTemp",
             data: {
-                faktur: faktur,
+                faktur: faktur
             },
-            dataType: "json",
+            dataType: "JSON",
             success: function(response) {
+                if (response.data) {
+                    $('#showDataTemp').html(response.data);
+                }
 
+                console.log(response);
             },
             error: function(xhr, ajaxOptions, thrownError) {
                 alert(xhr.status + '\n' + thrownError);
@@ -111,6 +116,42 @@
 
     $(document).ready(function() {
         dataTemp();
+
+        $('#kode_barang').keydown(function(e) {
+            if (e.keyCode == 13) {
+                e.preventDefault();
+                let kode_barang = $('#kode_barang').val();
+
+                $.ajax({
+                    type: "post",
+                    url: "<?= base_url() ?>barangmasuk/getDataBarang",
+                    data: {
+                        kode_barang: kode_barang
+                    },
+                    dataType: "JSON",
+                    success: function(response) {
+                        if (response.data) {
+                            let data = response.data;
+                            $('#nama_barang').val(data.brg_nama);
+                            $('#harga_jual').val(data.brg_harga);
+                            $('#harga_beli').focus();
+
+                            // alert('sukses');
+                        }
+
+                        console.log(response.data);
+                    },
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        alert(xhr.status + '\n' + thrownError);
+                    }
+                });
+            }
+        });
+
+        $('#tombolTambahItem').click(function(e) {
+            e.preventDefault();
+            alert('ini tombolTambahItem');
+        });
     });
 </script>
 <?= $this->endSection() ?>
