@@ -29,7 +29,7 @@
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="faktur">No. Faktur Barang Masuk</label>
-                        <input type="text" class="form-control" name="faktur" id="faktur">
+                        <input type="text" class="form-control" name="faktur" id="faktur" value="<?= $kodeFaktur ?>" readonly>
                     </div>
                     <div class="form-group col-md-6">
                         <label for="tgl_brg_masuk">Tanggal Barang Masuk</label>
@@ -83,6 +83,11 @@
                             </div>
                         </div>
                         <div id="showDataTemp"></div>
+                        <div class="row justify-content-end">
+                            <button type="button" class="btn btn-success btn-lg" id="tombolSelesaiTransaksi">
+                                <i class="fa fa-save"></i> Selesai Transaksi
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -252,6 +257,64 @@
                     alert(xhr.status + '\n' + thrownError);
                 }
             });
+        });
+
+        $('#tombolSelesaiTransaksi').click(function(e) {
+            e.preventDefault();
+            let faktur = $('#faktur').val();
+            let tgl_brg_masuk = $('#tgl_brg_masuk').val();
+
+            if (faktur.length == 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Pesan',
+                    text: 'Maaf, Faktur Masih Kosong',
+                })
+            } else {
+                Swal.fire({
+                    title: 'Selesai Transaksi',
+                    text: "Yakin Transaksi Ini Disimpan?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, Simpan!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            type: "POST",
+                            url: "<?= base_url() ?>barangmasuk/selesaiTransaksi",
+                            data: {
+                                faktur: faktur,
+                                tgl_brg_masuk: tgl_brg_masuk
+                            },
+                            dataType: "JSON",
+                            success: function(response) {
+                                if (response.error) {
+                                    Swal.fire({
+                                        icon: 'warning',
+                                        title: 'Pesan',
+                                        text: response.error,
+                                    });
+                                } else if (response.success) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Pesan',
+                                        text: response.success,
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            window.location.reload();
+                                        }
+                                    });
+                                }
+                            },
+                            error: function(xhr, ajaxOptions, thrownError) {
+                                alert(xhr.status + '\n' + thrownError);
+                            }
+                        });
+                    }
+                })
+            }
         });
     });
 </script>

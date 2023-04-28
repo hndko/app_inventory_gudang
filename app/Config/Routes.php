@@ -66,6 +66,7 @@ $routes->post('/barangmasuk/delete', 'BarangMasukController::delete');
 $routes->get('/barangmasuk/searchDataBarang', 'BarangMasukController::searchDataBarang');
 $routes->get('/barangmasuk/detailCariBarang', 'BarangMasukController::detailCariBarang');
 $routes->post('/barangmasuk/detailCariBarang', 'BarangMasukController::detailCariBarang');
+$routes->post('/barangmasuk/selesaiTransaksi', 'BarangMasukController::selesaiTransaksi');
 
 /*
  * --------------------------------------------------------------------

@@ -3,26 +3,43 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use App\Models\BarangMasukModel;
 use App\Models\BarangModel;
+use App\Models\DetailBarangMasukModel;
 use App\Models\TempBarangMasukModel;
 
 class BarangMasukController extends BaseController
 {
     protected $TempBarangMasuk;
+    protected $DetailBarangMasuk;
     protected $Barang;
+    protected $BarangMasuk;
     public function __construct()
     {
         $this->TempBarangMasuk = new TempBarangMasukModel();
+        $this->DetailBarangMasuk = new DetailBarangMasukModel();
         $this->Barang = new BarangModel();
+        $this->BarangMasuk = new BarangMasukModel();
     }
 
     public function index()
     {
+        // Get Kode Barang
+        $getKodeFaktur = $this->DetailBarangMasuk->selectMax('det_faktur')->first();
+        $getKode = $getKodeFaktur['det_faktur'];
+        $urutan = (int) substr($getKode, 4, 4);
+        $urutan++;
+        $huruf = 'F';
+        $newKodeFaktur = $huruf . sprintf("%04s", $urutan);
+
         $data = [
             'title' => 'Barang Masuk',
+            'kodeFaktur' => $newKodeFaktur
+
         ];
 
-        // dd($this->Barang->getSearchData(''));
+        // dd($this->TempBarangMasuk->showDataTemp('f-001'));
+        // dd($this->TempBarangMasuk->getWhere(['det_faktur' => 'f-001'])->getResultArray());
 
         return view('dashboard/barang_masuk/index', $data);
     }
@@ -153,6 +170,57 @@ class BarangMasukController extends BaseController
             } else {
                 alert('Data Tidak Ditemukan');
             }
+        } else {
+            exit('Maaf tidak bisa dipanggil');
+        }
+    }
+
+    public function selesaiTransaksi()
+    {
+        if ($this->request->isAJAX()) {
+            $faktur = $this->request->getVar('faktur');
+            $tgl_brg_masuk = $this->request->getVar('tgl_brg_masuk');
+
+            $dataTemp = $this->TempBarangMasuk->getWhere(['det_faktur' => $faktur]);
+
+            if ($dataTemp->getNumRows() == 0) {
+                $json = [
+                    'error' => 'Maaf, data item untuk faktur ini belum ada'
+                ];
+            } else {
+                // Simpan ke Tabel Barang Masuk
+                $subtotal = 0;
+                foreach ($dataTemp->getResultArray() as $row) :
+                    $subtotal += intval($row['det_subtotal']);
+                endforeach;
+
+                $this->BarangMasuk->save([
+                    'brgm_faktur' => $faktur,
+                    'brgm_tgl_faktur' => $tgl_brg_masuk,
+                    'brgm_total_harga' => $subtotal
+                ]);
+
+                // Simpan Ke Table Detail Barang Masuk
+                foreach ($dataTemp->getResultArray() as $row) :
+                    $this->DetailBarangMasuk->save([
+                        'det_faktur' => $row['det_faktur'],
+                        'det_brg_kode' => $row['det_brg_kode'],
+                        'det_harga_masuk' => $row['det_harga_masuk'],
+                        'det_harga_jual' => $row['det_harga_jual'],
+                        'det_jumlah' => $row['det_jumlah'],
+                        'det_subtotal' => $row['det_subtotal']
+                    ]);
+                endforeach;
+
+                // Bersihkan Data Table Temp Barang Masuk
+                $this->TempBarangMasuk->truncate();
+
+                $json = [
+                    'success' => 'Transaksi Berhasil Disimpan'
+                ];
+            }
+
+            echo json_encode($json);
         } else {
             exit('Maaf tidak bisa dipanggil');
         }
