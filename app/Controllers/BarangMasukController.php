@@ -24,6 +24,20 @@ class BarangMasukController extends BaseController
 
     public function index()
     {
+        $tombolKeyword = $this->request->getVar('tombolKeyword');
+        $data = [
+            'title' => 'Barang Masuk',
+            'result' => $this->BarangMasuk->findAll()
+        ];
+
+        // dd($this->TempBarangMasuk->showDataTemp('f-001'));
+        // dd($this->TempBarangMasuk->getWhere(['det_faktur' => 'f-001'])->getResultArray());
+
+        return view('dashboard/barang_masuk/index', $data);
+    }
+
+    public function create()
+    {
         // Get Kode Barang
         $getKodeFaktur = $this->DetailBarangMasuk->selectMax('det_faktur')->first();
         $getKode = $getKodeFaktur['det_faktur'];
@@ -38,10 +52,7 @@ class BarangMasukController extends BaseController
 
         ];
 
-        // dd($this->TempBarangMasuk->showDataTemp('f-001'));
-        // dd($this->TempBarangMasuk->getWhere(['det_faktur' => 'f-001'])->getResultArray());
-
-        return view('dashboard/barang_masuk/index', $data);
+        return view('dashboard/barang_masuk/create', $data);
     }
 
     public function dataTemp()
@@ -219,6 +230,25 @@ class BarangMasukController extends BaseController
                     'success' => 'Transaksi Berhasil Disimpan'
                 ];
             }
+
+            echo json_encode($json);
+        } else {
+            exit('Maaf tidak bisa dipanggil');
+        }
+    }
+
+    public function detailItem()
+    {
+        if ($this->request->isAJAX()) {
+            $faktur = $this->request->getVar('faktur');
+
+            $data = [
+                'result' => $this->DetailBarangMasuk->dataDetail($faktur)
+            ];
+
+            $json = [
+                'data' => view('dashboard/barang_masuk/modaldetailitem', $data)
+            ];
 
             echo json_encode($json);
         } else {
