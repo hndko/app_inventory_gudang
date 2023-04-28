@@ -33,7 +33,7 @@
                     </div>
                     <div class="form-group col-md-6">
                         <label for="tgl_brg_masuk">Tanggal Barang Masuk</label>
-                        <input type="date" class="form-control" name="tgl_brg_masuk" id="tgl_brg_masuk">
+                        <input type="date" class="form-control" name="tgl_brg_masuk" id="tgl_brg_masuk" value="<?= date('Y-m-d') ?>">
                     </div>
                 </div>
 
@@ -90,26 +90,33 @@
     </div>
 </div>
 
+<div class="modalcaribarang" style="display: none;"></div>
+
 <script>
     function dataTemp() {
         let faktur = $('#faktur').val();
 
         $.ajax({
-            type: "post",
+            type: "POST",
             url: "<?= base_url() ?>barangmasuk/dataTemp",
             data: {
                 faktur: faktur
             },
             dataType: "JSON",
             success: function(response) {
-                if (response.data) {
-                    $('#showDataTemp').html(response.data);
+                if (response.success) {
+                    $('#showDataTemp').html(response.success);
                 }
 
-                console.log(response);
+                // if (response.error) {
+                //     alert(response.error);
+                //     kosong();
+                // }
             },
             error: function(xhr, ajaxOptions, thrownError) {
                 alert(xhr.status + '\n' + thrownError);
+
+                console.log(response.data);
             }
         });
     }
@@ -118,45 +125,52 @@
         $('#kode_barang').val('');
         $('#nama_barang').val('');
         $('#harga_jual').val('');
+        $('#harga_beli').val('');
+        $('#jumlah').val('');
+
         $('#kode_barang').focus();
+    }
+
+    function ambilDataBarang() {
+        let kode_barang = $('#kode_barang').val();
+
+        $.ajax({
+            type: "post",
+            url: "<?= base_url() ?>barangmasuk/getDataBarang",
+            data: {
+                kode_barang: kode_barang
+            },
+            dataType: "JSON",
+            success: function(response) {
+                if (response.data) {
+                    let data = response.data;
+                    $('#nama_barang').val(data.brg_nama);
+                    $('#harga_jual').val(data.brg_harga);
+                    $('#harga_beli').focus();
+
+                    // alert('sukses');
+                }
+
+                if (response.error) {
+                    alert(response.error);
+                    kosong();
+                }
+
+                console.log(response.data);
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert(xhr.status + '\n' + thrownError);
+            }
+        });
     }
 
     $(document).ready(function() {
         dataTemp();
 
         $('#kode_barang').keydown(function(e) {
-            if (e.keyCode == 13) {
+            if (e.keyCode == 13 || e.keyCode == 9) {
                 e.preventDefault();
-                let kode_barang = $('#kode_barang').val();
-
-                $.ajax({
-                    type: "post",
-                    url: "<?= base_url() ?>barangmasuk/getDataBarang",
-                    data: {
-                        kode_barang: kode_barang
-                    },
-                    dataType: "JSON",
-                    success: function(response) {
-                        if (response.data) {
-                            let data = response.data;
-                            $('#nama_barang').val(data.brg_nama);
-                            $('#harga_jual').val(data.brg_harga);
-                            $('#harga_beli').focus();
-
-                            // alert('sukses');
-                        }
-
-                        if (response.error) {
-                            alert(response.error);
-                            kosong();
-                        }
-
-                        console.log(response.data);
-                    },
-                    error: function(xhr, ajaxOptions, thrownError) {
-                        alert(xhr.status + '\n' + thrownError);
-                    }
-                });
+                ambilDataBarang();
             }
         });
 
@@ -169,14 +183,75 @@
             let jumlah = $('#jumlah').val();
 
             if (faktur.length == 0) {
-                alert('Maaf, Faktur Wajib Diisi');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Maaf, Faktur Wajib Diisi',
+                })
             } else if (kode_barang.length == 0) {
-                alert('Maaf, Kode Barang Tidak Boleh Kosong');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Maaf, Kode Barang Tidak Boleh Kosong',
+                })
             } else if (harga_beli.length == 0) {
-                alert('Maaf, Harga Beli Tidak Boleh Kosong');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Maaf, Harga Beli Tidak Boleh Kosong',
+                })
             } else if (jumlah.length == 0) {
-                alert('Maaf, Jumlah Tidak Boleh kosong');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Maaf, Jumlah Tidak Boleh Kosong',
+                })
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: "<?= base_url() ?>/barangmasuk/simpanTemp",
+                    data: {
+                        faktur: faktur,
+                        kode_barang: kode_barang,
+                        harga_beli: harga_beli,
+                        harga_jual: harga_jual,
+                        jumlah: jumlah
+                    },
+                    dataType: "JSON",
+                    success: function(response) {
+                        if (response.success) {
+                            alert(response.success);
+                            kosong();
+                            dataTemp();
+                        }
+                    },
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        alert(xhr.status + '\n' + thrownError);
+                    }
+                });
             }
+        });
+
+        $('#tombolReload').click(function(e) {
+            e.preventDefault();
+            dataTemp();
+        });
+
+        $('#tombolCariBarang').click(function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: "<?= base_url() ?>/barangmasuk/searchDataBarang",
+                dataType: "JSON",
+                success: function(response) {
+                    if (response.data) {
+                        $('.modalcaribarang').html(response.data).show();
+                        $('#modalcaribarang').modal('show');
+                    }
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    alert(xhr.status + '\n' + thrownError);
+                }
+            });
         });
     });
 </script>

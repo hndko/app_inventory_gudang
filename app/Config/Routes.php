@@ -56,10 +56,16 @@ $routes->post('/barang/update', 'BarangController::update');
 $routes->delete('/barang/delete/(:num)', 'BarangController::delete/$1');
 
 $routes->get('/barangmasuk', 'BarangMasukController::index');
-// $routes->get('/barangmasuk/dataTemp', 'BarangMasukController::dataTemp');
+$routes->get('/barangmasuk/dataTemp', 'BarangMasukController::dataTemp');
 $routes->post('/barangmasuk/dataTemp', 'BarangMasukController::dataTemp');
-// $routes->get('/barangmasuk/getDataBarang', 'BarangMasukController::getDataBarang');
+$routes->get('/barangmasuk/getDataBarang', 'BarangMasukController::getDataBarang');
 $routes->post('/barangmasuk/getDataBarang', 'BarangMasukController::getDataBarang');
+$routes->get('/barangmasuk/simpanTemp', 'BarangMasukController::simpanTemp');
+$routes->post('/barangmasuk/simpanTemp', 'BarangMasukController::simpanTemp');
+$routes->post('/barangmasuk/delete', 'BarangMasukController::delete');
+$routes->get('/barangmasuk/searchDataBarang', 'BarangMasukController::searchDataBarang');
+$routes->get('/barangmasuk/detailCariBarang', 'BarangMasukController::detailCariBarang');
+$routes->post('/barangmasuk/detailCariBarang', 'BarangMasukController::detailCariBarang');
 
 /*
  * --------------------------------------------------------------------

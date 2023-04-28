@@ -16,4 +16,9 @@ class BarangModel extends Model
     {
         return $this->table('barangs')->join('kategoris', 'brg_kat_id=kat_id')->join('satuans', 'brg_sat_id=sat_id')->findAll();
     }
+
+    public function getSearchData($cari)
+    {
+        return $this->table('barangs')->join('kategoris', 'brg_kat_id=kat_id')->join('satuans', 'brg_sat_id=sat_id')->orlike('brg_kode', $cari)->orlike('brg_nama', $cari)->findAll();
+    }
 }
