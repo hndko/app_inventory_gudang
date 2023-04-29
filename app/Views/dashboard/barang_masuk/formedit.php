@@ -1,0 +1,331 @@
+<?= $this->extend('_layouts/default') ?>
+
+<?= $this->section('content') ?>
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0"><?= $title ?></h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="<?= base_url() ?>">Home</a></li>
+                    <li class="breadcrumb-item active"><?= $title ?></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header d-flex justify-content-end">
+                <button type="button" class="btn btn-warning btn-sm" onclick="location.href='<?= base_url('barangmasuk') ?>'">
+                    <i class="fa fa-backward"></i> Kembali
+                </button>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm table-striped table-hover" style="width: 100%;">
+                    <tr>
+                        <td style="width: 20%;">No. Faktur</td>
+                        <td style="width: 2%;">:</td>
+                        <td style="width: 28%;"><?= $faktur ?></td>
+                        <td rowspan="3" class="align-middle text-center fw-bold fs-2" id="totalHarga"></td>
+                    </tr>
+                    <tr>
+                        <td style="width: 20%;">Tanggal Faktur</td>
+                        <td style="width: 2%;">:</td>
+                        <td style="width: 28%;"><?= $tanggal ?></td>
+                    </tr>
+                </table>
+
+                <div class="card mt-2">
+                    <div class="card-header bg-primary">
+                        Input Barang
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <input type="hidden" name="faktur" id="faktur" value="<?= $faktur ?>">
+                            <div class="form-group col-md-3">
+                                <label for="kode_barang">Kode Barang</label>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" name="kode_barang" id="kode_barang" placeholder="Kode Barang">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-primary" type="button" id="tombolCariBarang">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="nama_barang">Nama Barang</label>
+                                <input type="text" class="form-control" name="nama_barang" id="nama_barang" autocomplete="off" readonly>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label for="harga_jual">Harga Jual</label>
+                                <input type="number" class="form-control" name="harga_jual" id="harga_jual" autocomplete="off" readonly>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label for="harga_beli">Harga Beli</label>
+                                <input type="number" class="form-control" name="harga_beli" id="harga_beli" autocomplete="off">
+                            </div>
+                            <div class="form-group col-md-1">
+                                <label for="jumlah">Jumlah</label>
+                                <input type="number" class="form-control" name="jumlah" id="jumlah" autocomplete="off">
+                            </div>
+                            <div class="form-group col-md-1">
+                                <label>Aksi</label>
+                                <div class="input-group">
+                                    <button type="button" class="btn btn-info btn-sm" title="Tambah Item" id="tombolTambahItem">
+                                        <i class="fa fa-plus-square"></i>
+                                    </button>
+
+                                    <button type="button" class="btn btn-primary btn-sm" title="Edit Item" id="tombolEditItem" style="display: none;">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-secondary btn-sm" title="Reload" id="tombolReload" style="display: none;">
+                                        <i class="fa fa-sync-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="det_id" id="det_id">
+                        <div id="showDataDetail"></div>
+                    </div>
+                </div>
+
+                <div class="modalcaribarang" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function dataDetail() {
+        let faktur = $('#faktur').val();
+
+        $.ajax({
+            type: "POST",
+            url: "<?= base_url() ?>barangmasuk/dataDetail",
+            data: {
+                faktur: faktur
+            },
+            dataType: "JSON",
+            success: function(response) {
+                if (response.success) {
+                    $('#showDataDetail').html(response.success);
+                    $('#totalHarga').html(response.totalHarga);
+                }
+
+                if (response.error) {
+                    alert(response.error);
+                    kosong();
+                }
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert(xhr.status + '\n' + thrownError);
+
+                console.log(response.data);
+            }
+        });
+    }
+
+    function kosong() {
+        $('#kode_barang').val('');
+        $('#nama_barang').val('');
+        $('#harga_jual').val('');
+        $('#harga_beli').val('');
+        $('#jumlah').val('');
+        $('#det_id').val('');
+
+        $('#kode_barang').focus();
+    }
+
+    function ambilDataBarang() {
+        let kode_barang = $('#kode_barang').val();
+
+        $.ajax({
+            type: "post",
+            url: "<?= base_url() ?>barangmasuk/getDataBarang",
+            data: {
+                kode_barang: kode_barang
+            },
+            dataType: "JSON",
+            success: function(response) {
+                if (response.data) {
+                    let data = response.data;
+                    $('#nama_barang').val(data.brg_nama);
+                    $('#harga_jual').val(data.brg_harga);
+                    $('#harga_beli').focus();
+
+                    // alert('sukses');
+                }
+
+                if (response.error) {
+                    alert(response.error);
+                    kosong();
+                }
+
+                console.log(response.data);
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert(xhr.status + '\n' + thrownError);
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        dataDetail();
+        $('#tombolReload').click(function(e) {
+            e.preventDefault();
+            $(this).hide();
+            $('#tombolEditItem').fadeOut();
+            $('#tombolTambahItem').fadeIn();
+
+            kosong();
+        });
+
+        $('#kode_barang').keydown(function(e) {
+            if (e.keyCode == 13 || e.keyCode == 9) {
+                e.preventDefault();
+                ambilDataBarang();
+            }
+        });
+
+        $('#tombolTambahItem').click(function(e) {
+            e.preventDefault();
+            let faktur = $('#faktur').val();
+            let kode_barang = $('#kode_barang').val();
+            let harga_beli = $('#harga_beli').val();
+            let harga_jual = $('#harga_jual').val();
+            let jumlah = $('#jumlah').val();
+
+            if (faktur.length == 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Maaf, Faktur Wajib Diisi',
+                })
+            } else if (kode_barang.length == 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Maaf, Kode Barang Tidak Boleh Kosong',
+                })
+            } else if (harga_beli.length == 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Maaf, Harga Beli Tidak Boleh Kosong',
+                })
+            } else if (jumlah.length == 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Maaf, Jumlah Tidak Boleh Kosong',
+                })
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: "<?= base_url() ?>/barangmasuk/simpanDetail",
+                    data: {
+                        faktur: faktur,
+                        kode_barang: kode_barang,
+                        harga_beli: harga_beli,
+                        harga_jual: harga_jual,
+                        jumlah: jumlah
+                    },
+                    dataType: "JSON",
+                    success: function(response) {
+                        if (response.success) {
+                            alert(response.success);
+                            kosong();
+                            dataDetail();
+                        }
+                    },
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        alert(xhr.status + '\n' + thrownError);
+                    }
+                });
+            }
+        });
+
+        $('#tombolEditItem').click(function(e) {
+            e.preventDefault();
+            let faktur = $('#faktur').val();
+            let kode_barang = $('#kode_barang').val();
+            let harga_beli = $('#harga_beli').val();
+            let harga_jual = $('#harga_jual').val();
+            let jumlah = $('#jumlah').val();
+
+            if (faktur.length == 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Maaf, Faktur Wajib Diisi',
+                })
+            } else if (kode_barang.length == 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Maaf, Kode Barang Tidak Boleh Kosong',
+                })
+            } else if (harga_beli.length == 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Maaf, Harga Beli Tidak Boleh Kosong',
+                })
+            } else if (jumlah.length == 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Maaf, Jumlah Tidak Boleh Kosong',
+                })
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: "<?= base_url() ?>/barangmasuk/editDetailItem",
+                    data: {
+                        id: $('#det_id').val(),
+                        faktur: faktur,
+                        kode_barang: kode_barang,
+                        harga_beli: harga_beli,
+                        harga_jual: harga_jual,
+                        jumlah: jumlah
+                    },
+                    dataType: "JSON",
+                    success: function(response) {
+                        if (response.success) {
+                            alert(response.success);
+                            kosong();
+                            dataDetail();
+                        }
+                    },
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        alert(xhr.status + '\n' + thrownError);
+                    }
+                });
+            }
+        });
+
+        $('#tombolCariBarang').click(function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: "<?= base_url() ?>/barangmasuk/searchDataBarang",
+                dataType: "JSON",
+                success: function(response) {
+                    if (response.data) {
+                        $('.modalcaribarang').html(response.data).show();
+                        $('#modalcaribarang').modal('show');
+                    }
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    alert(xhr.status + '\n' + thrownError);
+                }
+            });
+        });
+    });
+</script>
+<?= $this->endSection() ?>

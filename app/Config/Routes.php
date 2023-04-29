@@ -69,6 +69,14 @@ $routes->get('/barangmasuk/searchDataBarang', 'BarangMasukController::searchData
 $routes->get('/barangmasuk/detailCariBarang', 'BarangMasukController::detailCariBarang');
 $routes->post('/barangmasuk/detailCariBarang', 'BarangMasukController::detailCariBarang');
 $routes->post('/barangmasuk/selesaiTransaksi', 'BarangMasukController::selesaiTransaksi');
+$routes->post('/barangmasuk/detailItem', 'BarangMasukController::detailItem');
+$routes->get('/barangmasuk/edit/(:any)', 'BarangMasukController::edit/$1');
+$routes->get('/barangmasuk/dataDetail', 'BarangMasukController::dataDetail');
+$routes->post('/barangmasuk/dataDetail', 'BarangMasukController::dataDetail');
+$routes->post('/barangmasuk/deleteDetail', 'BarangMasukController::deleteDetail');
+$routes->post('/barangmasuk/editItem', 'BarangMasukController::editItem');
+$routes->post('/barangmasuk/simpanDetail', 'BarangMasukController::simpanDetail');
+$routes->post('/barangmasuk/editDetailItem', 'BarangMasukController::editDetailItem');
 
 /*
  * --------------------------------------------------------------------

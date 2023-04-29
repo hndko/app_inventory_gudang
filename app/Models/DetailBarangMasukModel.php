@@ -16,4 +16,21 @@ class DetailBarangMasukModel extends Model
     {
         return $this->table('detail_barang_masuk')->join('barangs', 'barangs.brg_kode = detail_barang_masuk.det_brg_kode')->where('det_faktur', $faktur)->findAll();
     }
+
+    public function ambiltotalharga($faktur)
+    {
+        $query = $this->where('det_faktur', $faktur)->findAll();
+
+        $totalHarga = 0;
+        foreach ($query as $row) {
+            $totalHarga += $row['det_subtotal'];
+        }
+
+        return $totalHarga;
+    }
+
+    public function dataBarangByID($id)
+    {
+        return $this->table('detail_barang_masuk')->join('barangs', 'barangs.brg_kode = detail_barang_masuk.det_brg_kode')->where('det_id', $id)->first();
+    }
 }

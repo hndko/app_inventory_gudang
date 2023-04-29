@@ -45,7 +45,7 @@
                             <th>Tanggal</th>
                             <th>Jumlah Item</th>
                             <th>Total Harga (Rp)</th>
-                            <th style="width: 15%;">#</th>
+                            <th style="width: 5%;">#</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -63,8 +63,23 @@
 
                                     <span style="cursor: pointer;" onclick="detailItem('<?= $res['brgm_faktur'] ?>')"><?= $jumlahItem ?></span>
                                 </td>
-                                <td><?= number_format($res['brgm_total_harga'], 0, ",", ".") ?></td>
-                                <td></td>
+                                <td>
+                                    <?php
+                                    $db = \Config\Database::connect();
+                                    $query = $db->table('detail_barang_masuk')->where('det_faktur', $res['brgm_faktur'])->get();
+
+                                    $totalHarga = 0;
+                                    foreach ($query->getResultArray() as $row) {
+                                        $totalHarga += $row['det_subtotal'];
+                                    }
+                                    ?>
+                                    Rp <?= number_format($totalHarga, 0, ",", ".") ?>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-outline-info btn-sm" title="Edit Transaksi" onclick="edit('<?= sha1($res['brgm_faktur']) ?>')">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -77,6 +92,10 @@
 <div class="viewmodal" style="display: none;"></div>
 
 <script>
+    function edit(faktur) {
+        window.location.href = ('<?= base_url() ?>barangmasuk/edit/') + faktur;
+    }
+
     function detailItem(faktur) {
         $.ajax({
             type: "POST",
@@ -86,7 +105,10 @@
             },
             dataType: "JSON",
             success: function(response) {
-
+                if (response.data) {
+                    $('.viewmodal').html(response.data).show();
+                    $('#modalItem').modal('show');
+                }
             },
             error: function(xhr, ajaxOptions, thrownError) {
                 alert(xhr.status + '\n' + thrownError);

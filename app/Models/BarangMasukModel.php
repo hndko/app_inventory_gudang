@@ -11,4 +11,9 @@ class BarangMasukModel extends Model
     protected $allowedFields    = [
         'brgm_id', 'brgm_faktur', 'brgm_tgl_faktur', 'brgm_total_harga'
     ];
+
+    public function cekFaktur($faktur)
+    {
+        return $this->where(['sha1(brgm_faktur)' => $faktur]);
+    }
 }
