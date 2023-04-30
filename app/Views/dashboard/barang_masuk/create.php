@@ -227,7 +227,8 @@
                         if (response.success) {
                             alert(response.success);
                             kosong();
-                            dataTemp();
+
+                            console.log(response.success);
                         }
                     },
                     error: function(xhr, ajaxOptions, thrownError) {
